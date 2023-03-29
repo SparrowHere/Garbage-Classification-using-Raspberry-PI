@@ -4,10 +4,10 @@ import numpy as np
 import tensorflow as tf
 
 # Model dosyasının yolu
-MODEL_PATH = '/path/to/your/model.tflite'
+MODEL_PATH = os.getcwd() + "\model.tflite"
 
 # Sınıf etiketleri
-LABELS = ['class1', 'class2', 'class3']
+LABELS = ['No Bottle', 'Plastic', 'Paper', 'Glass', 'Metal']
 
 # Girdi görüntüsünün boyutları
 INPUT_SIZE = (224, 224)
