@@ -1,7 +1,7 @@
 import os
 import cv2
 import numpy as np
-import tensorflow as tf
+import tflite_runtime.interpreter as tflite
 
 # Model dosyasının yolu
 MODEL_PATH = os.getcwd() + "\model.tflite"
@@ -13,7 +13,7 @@ LABELS = ['No Bottle', 'Plastic', 'Paper', 'Glass', 'Metal']
 INPUT_SIZE = (224, 224)
 
 # Modeli yükleme
-interpreter = tf.lite.Interpreter(model_path=MODEL_PATH)
+interpreter = tflite.Interpreter(model_path = MODEL_PATH)
 interpreter.allocate_tensors()
 
 # Girdi ve çıktı tensorlarını alma
@@ -32,7 +32,7 @@ while True:
     # Girdi görüntüsünü model için uygun boyuta getirme ve normalizasyon
     img = cv2.resize(frame, INPUT_SIZE)
     img = img / 255.0
-    img = np.expand_dims(img, axis=0)
+    img = np.expand_dims(img, axis = 0)
     img = img.astype(np.float32)
 
     # Girdi tensorunu modelde çalıştırma
