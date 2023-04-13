@@ -1,20 +1,24 @@
 import os
 import cv2
 import numpy as np
-import tflite_runtime.interpreter as tflite
-from time import sleep
+import tensorflow as tf
+# from smbus2 import SMBus as smbus
 
 # Model dosyasının yolu
 MODEL_PATH = os.getcwd() + "\model.tflite"
 
-# Sınıf etiketleri
+# Sınıf etiketleri (one-hot encoding)
 LABELS = ['No Bottle', 'Plastic', 'Paper', 'Glass', 'Metal']
+ONE_HOT = [hex(int(''.join(map(str, i)), 2)) for i in np.eye(len(LABELS)).astype(np.int8)]
+
+# I2C ile gönderilecek veri
+bus = smbus.SMBus(1)
 
 # Girdi görüntüsünün boyutları
 INPUT_SIZE = (224, 224)
 
 # Modeli yükleme
-interpreter = tflite.Interpreter(model_path = MODEL_PATH)
+interpreter = tf.lite.Interpreter(model_path = MODEL_PATH)
 interpreter.allocate_tensors()
 
 # Girdi ve çıktı tensorlarını alma
@@ -25,7 +29,6 @@ output_details = interpreter.get_output_details()
 cam = cv2.VideoCapture(0)
 cam.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
 cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-
 while True:
     # Kameradan bir görüntü alma
     ret, frame = cam.read()
