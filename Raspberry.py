@@ -9,6 +9,11 @@ MODEL_PATH = os.getcwd() + "\model.tflite"
 
 # Sınıf etiketleri
 LABELS = ['No Bottle', 'Plastic', 'Paper', 'Glass', 'Metal']
+ONE_HOT = [hex(int(''.join(map(str, i)), 2)) for i in np.eye(len(LABELS)).astype(np.int8)]
+
+# I2C ile gönderilecek veri
+bus = smbus.SMBus(1)
+# ...
 
 # Girdi görüntüsünün boyutları
 INPUT_SIZE = (224, 224)
