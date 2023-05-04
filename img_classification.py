@@ -31,13 +31,13 @@ cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 while True:
     # Kameradan bir görüntü alma
     ret, frame = cam.read()
-    
+
     # Girdi Görüntüsünü fotoğraf olarak kaydetme ve atama
     cv2.imwrite('frame.jpg', frame)
     img = cv2.imread('frame.jpg')
     
     # Girdi görüntüsünü model için uygun boyuta getirme ve normalizasyon
-    img = np.expand_dims(cv2.resize(frame, INPUT_SIZE) / 255.0, axis=0).astype(np.float32)
+    img = np.expand_dims(cv2.resize(frame, INPUT_SIZE) / 255.0, axis = 0).astype(np.float32)
 
     # Girdi tensorunu modelde çalıştırma
     interpreter.set_tensor(input_details[0]['index'], img)
@@ -55,7 +55,7 @@ while True:
     cv2.putText(frame, text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
     # Görüntüyü gösterme
-    cv2.imshow('Classification', img)
+    cv2.imshow('Classification', frame)
 
     # Çıkış tuşuna basıldığında programı sonlandırma
     if cv2.waitKey(1) == ord('q'):
