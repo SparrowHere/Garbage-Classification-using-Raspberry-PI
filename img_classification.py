@@ -2,60 +2,59 @@ import os
 import cv2
 import numpy as np
 import tensorflow as tf
-# from smbus2 import SMBus as smbus
 from time import sleep
 import serial
 
-# Model dosyasının yolu
+# Path to the model
 MODEL_PATH = os.getcwd() + "\model.tflite"
 
-# Sınıf etiketleri (one-hot encoding)
+# Class labels (one-hot encoding)
 LABELS = ['No Bottle', 'Plastic', 'Paper', 'Glass', 'Metal']
 
-# Girdi görüntüsünün boyutları
+# Input size of the model
 INPUT_SIZE = (224, 224)
 
-# Modeli yükleme
+# Loading & allocating the model
 interpreter = tf.lite.Interpreter(model_path = MODEL_PATH)
 interpreter.allocate_tensors()
 
-# Girdi ve çıktı tensorlarını alma
+# Getting input & output tensors
 input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()
 
-# Kamera ayarları
+# Starting the camera
 cam = cv2.VideoCapture(0)
 cam.set(cv2.CAP_PROP_FRAME_WIDTH, 1080)
 cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 
 while True:
-    # Kameradan bir görüntü alma
+    # Reading the input frame
     ret, frame = cam.read()
     
-    # Girdi Görüntüsünü fotoğraf olarak kaydetme ve atama
+    # Saving the input frame
     cv2.imwrite('frame.jpg', frame)
     img = cv2.imread('frame.jpg')
     
-    # Girdi görüntüsünü model için uygun boyuta getirme ve normalizasyon
+    # Normalizing & resizing the input frame
     img = np.expand_dims(cv2.resize(frame, INPUT_SIZE) / 255.0, axis = 0).astype(np.float32)
 
-    # Girdi tensorunu modelde çalıştırma
+    # Setting the input tensor
     interpreter.set_tensor(input_details[0]['index'], img)
     interpreter.invoke()
 
-    # Çıktı tensorunu alma ve sınıf etiketini bulma
+    # Getting the output tensor & label index (reformatting the output)
     output = interpreter.get_tensor(output_details[0]['index'])
     label_idx = np.argmax(output)
     text = LABELS[label_idx] + f" ({output[0][label_idx] * 100:.2f}"
     
-    # Görüntüye sınıf etiketini ekleme
+    # Drawing the label text on the frame
     cv2.putText(frame, text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
-    # Görüntüyü gösterme
+    # Showing the frame
     cv2.imshow('Classification', frame)
     
     try:
-        # Arduino ile seri haberleşme başlatma
+        # Seting up & starting the serial communication between the Arduino & the PC
         s = serial.Serial(
             "COM9",
             9600,
@@ -64,24 +63,24 @@ while True:
         )
         
         sleep(2)
-        
+    
         s.reset_input_buffer()
         print("Serial communication has started.")
         
-        # Sınıf etiketini Arduino'ya gönderme
+        # Sending the label index to the Arduino
         s.write(f"{LABELS[label_idx]}\n".encode())
+    # When the serial communication is interrupted, the serial port is closed (communication is ended)
     except KeyboardInterrupt:
         print("Serial communication has ended.")
-        
-        # Herhangi bir klavye tuşuna basıldığında seri haberleşmeyi sonlandırma
+
         s.close()
     
-    # Çıkış tuşuna basıldığında programı sonlandırma
+    # When the 'q' key is pressed, the program is terminated
     if cv2.waitKey(1) == ord('q'):
         break
     
     sleep(1)
 
-# Temizleme
+# Cleaning up
 cam.release()
 cv2.destroyAllWindows()
