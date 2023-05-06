@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 import tensorflow as tf
 from time import sleep
-import serial
+import keyboard
 
 # Path to the model
 MODEL_PATH = os.getcwd() + "\model.tflite"
@@ -48,10 +48,10 @@ while True:
     text = LABELS[label_idx] + f" ({output[0][label_idx] * 100:.2f})"
     
     # Putting the label on the saved image (labeling the image)
-    img = cv2.putText(cv2.imread('frame.jpg'), text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+    img = cv2.putText(cv2.imread('frame.jpg'), text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 2)
     cv2.imwrite('frame.jpg', img)
     
-    if KeyboardInterrupt:
+    if keyboard.is_pressed("q"):
         break
     
     sleep(1)
