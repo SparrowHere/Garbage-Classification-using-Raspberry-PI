@@ -51,7 +51,7 @@ while True:
     img = cv2.putText(cv2.imread('frame.jpg'), text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
     cv2.imwrite('frame.jpg', img)
     
-    if cv2.waitKey(1) == ord('q'):
+    if KeyboardInterrupt:
         break
     
     sleep(1)
