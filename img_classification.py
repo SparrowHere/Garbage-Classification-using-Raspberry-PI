@@ -45,37 +45,12 @@ while True:
     # Getting the output tensor & label index (reformatting the output)
     output = interpreter.get_tensor(output_details[0]['index'])
     label_idx = np.argmax(output)
-    text = LABELS[label_idx] + f" ({output[0][label_idx] * 100:.2f}"
+    text = LABELS[label_idx] + f" ({output[0][label_idx] * 100:.2f})"
     
-    # Drawing the label text on the frame
-    cv2.putText(frame, text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-
-    # Showing the frame
-    cv2.imshow('Classification', frame)
+    img = cv2.putText(cv2.imread('frame.jpg'), text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
     
-    try:
-        # Seting up & starting the serial communication between the Arduino & the PC
-        s = serial.Serial(
-            "COM9",
-            9600,
-            parity = serial.PARITY_NONE,
-            stopbits = serial.STOPBITS_ONE
-        )
-        
-        sleep(2)
-    
-        s.reset_input_buffer()
-        print("Serial communication has started.")
-        
-        # Sending the label index to the Arduino
-        s.write(f"{LABELS[label_idx]}\n".encode())
-    # When the serial communication is interrupted, the serial port is closed (communication is ended)
-    except KeyboardInterrupt:
-        print("Serial communication has ended.")
-
-        s.close()
-    
-    # When the 'q' key is pressed, the program is terminated
+    # Showing the result on the terminal
+    print(f"{text}\n")
     if cv2.waitKey(1) == ord('q'):
         break
     
