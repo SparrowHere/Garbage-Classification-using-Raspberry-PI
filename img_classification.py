@@ -48,7 +48,7 @@ while True:
     text = LABELS[label_idx] + f" ({output[0][label_idx] * 100:.2f})"
     
     # Putting the label on the saved image (labeling the image)
-    img = cv2.putText(cv2.imread('frame.jpg'), text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 2)
+    img = cv2.putText(cv2.imread('frame.jpg'), text, (30, 90), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 2)
     cv2.imwrite('frame.jpg', img)
     
     if keyboard.is_pressed("q"):
