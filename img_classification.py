@@ -9,7 +9,7 @@ import keyboard
 MODEL_PATH = os.getcwd() + "\model.tflite"
 
 # Class labels (one-hot encoding)
-LABELS = ['No Bottle', 'Plastic', 'Paper', 'Glass', 'Metal']
+LABELS = ['No Bottle', 'Plastic', 'Paper', 'Glass', 'Metal']    # ( ! ) "Glass" is not included in the dataset.
 
 # Input size of the model
 INPUT_SIZE = (224, 224)
